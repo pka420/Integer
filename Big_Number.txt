@@ -1,0 +1,86 @@
+int main()
+{
+	
+	Integer d1 = 1, d2 = 1, d3;
+	srand(time(0));
+	char ch;
+	do
+	{
+		d1 *= rand();
+		d2 *= rand();
+		d3 = d1 * d2;
+		cout << "First Number = " << d1 << endl;
+		cout << "Second Number = " << d2 << endl;
+		cout << "Their Product = " << d3 << endl << endl;
+		cout << "Do you want to keep on multiplying? (y/n): ";
+		cin >> ch;
+	}while ((ch == 'y') || (ch == 'Y'));
+
+	system("Pause");
+	return 0;
+}
+
+
+Sample Run Output
+=================
+First Number = 7359
+Second Number = 14368
+Their Product = 105734112
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 121313115
+Second Number = 409344320
+Their Product = 49658834566756800
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 2194918189695
+Second Number = 3642345759360
+Their Product = 7994650960377711301795200
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 69943263032820870
+Second Number = 36696633525552000
+Their Product = 2566682291096716194555783870240000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 1017114931023281091540
+Second Number = 898480375239615168000
+Their Product = 913857804887612893929720438160580478720000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 26365653241985492454899880
+Second Number = 676555722555430221504000
+Their Product = 17837833579777416181643998538092921078543019520000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 50516591611644203543588170080
+Second Number = 17584359784938186887110464000
+Their Product = 888301922007942082740141162062846082117620664579717120000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 763760348576448713375509543439520
+Second Number = 87411852490927727015826116544000
+Their Product = 66761706928184077530621473513493232650130981240898074135418880000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 14012711115332104544300473593484873440
+Second Number = 2022448031082594819965168858478528000
+Their Product = 28339980005332606098501420782611020073437099171472675926102461037496320000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 105978134165256706668544481787526097826720
+Second Number = 2641317128593868834874510529172957568000
+Their Product = 279921861027111632899393916464826611128918644030205289526021464151519576616960000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 501276574601664222542215398854998442720385600
+Second Number = 59939409599180665469807267438521926090624000
+Their Product = 30046221927523395469875525272170747654428645231863332044562244056734751647757824614400000
+
+Do you want to keep on multiplying? (y/n): y
+First Number = 9744315333681750821998125138342314728041575678400
+Second Number = 715556671795018784378559158681074753669869312000
+Their Product = 6972609849090481522825511588371250879706686032997239878050862327968832303457764842285741260800000
+
+Do you want to keep on multiplying? (y/n): n
+Press any key to continue . . .
