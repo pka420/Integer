@@ -591,41 +591,6 @@ ostream& operator << (ostream &out, const Integer &d)
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-int main() {
-	Integer a(65);
-	Integer b(2);
-	cout<<"noice is: "<< (a%b) <<endl;
-
-	a = -68;
-	b = -9;
-	cout<<"noice is: "<< (a%b) <<endl;
-
-	a = 70;
-	b = -1;
-	cout<<"noice is: "<< (a%b) <<endl;
-
-	a = -7058;
-	b = 3;
-	cout<<"noice is: "<< (a%b) <<endl;
-}
-*/
-
-
-
-
 ////////////End of provided function definitions. Use them without any modification.///////////////
 int main()
 {
