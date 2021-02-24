@@ -112,19 +112,31 @@ private: //Private member functions
 		return 0;
 	}
 	static Integer add_magnitudes(const Integer &A, const Integer &B) {
-		int num_a(0), num_b(0), sum(0);
-		// converting:
-		for(int i=0; i<A.length; i++ ) {
-			num_a = num_a*10;
-			num_a = num_a + (A.magnitude[i]-48);
-		}
-		for(int i=0; i<B.length; i++ ) {
-			num_b = num_b*10;
-			num_b = num_b + (B.magnitude[i]-48);
-		}
-		sum = num_a + num_b;
-		Integer tmp_cero(sum);
-		return tmp_cero;
+		int len = 0;
+	    if (A.length > B.length) 
+	    	len = A.length;
+	    else
+	    	len = B.length;
+	        
+	    Integer result;
+	    // Calculate length of both string 
+	    Integer tmp_B(B), tmp_A(A);
+	    tmp_A.resize(len);
+	    tmp_B.resize(len);
+	  
+	    int carry = 0; 
+	    for (int i=len-1; i>=0 ; i--) 
+	    {	      
+	        int sum = (tmp_A.magnitude[i]-48)+(tmp_B.magnitude[i]-48)+carry; 
+	        result.prependDigit( (sum%10) + '0');
+	        //cout<<"result after adding is: "<<result<<endl;
+	        carry = sum/10;
+	    } 
+	  	// adding rest of the carry
+	    if (carry > 0)
+	        result.prependDigit(carry + '0');
+
+	    return result;
 	}
 	static Integer subtract_magnitudes(const Integer &A, const Integer &B) {
 		int num_a(0), num_b(0), diff(0);
@@ -591,6 +603,16 @@ ostream& operator << (ostream &out, const Integer &d)
 }
 
 
+int main() {
+	Integer a(1234567), b(1234567);
+
+	cout<<"noice is "<< a * b <<endl;
+
+	return 0;
+}
+
+/*
+
 ////////////End of provided function definitions. Use them without any modification.///////////////
 int main()
 {
@@ -1041,6 +1063,8 @@ int main()
 	system("Pause");
 	return 0;
 }
+
+*/
 
 
 /*
