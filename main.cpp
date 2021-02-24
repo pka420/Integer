@@ -439,17 +439,18 @@ Integer Integer :: operator % (const Integer &agent99) const{
   	Numerator.sign = '+';
   	Denominator.sign = '+';
 
-  	if(Numerator < Denominator)
-  		return result;
+  	if(Numerator < Denominator) {
+  		if(this->sign == '-' ) 
+  			Numerator.sign = '-';
+  		return Numerator;
+	}
 
   	while(Numerator >= Denominator) {
   		Numerator = Numerator - Denominator;
   	}
 
-  	if(this->sign != agent99.sign) 
+  	if(this->sign == '-') 
   		Numerator.sign = '-';
-  	else
-  		Numerator.sign = '+';
 
     return Numerator;
 }
