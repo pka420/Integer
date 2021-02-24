@@ -312,11 +312,11 @@ Integer Integer :: operator + (const Integer &agent99) const {
 		tmp_cero.sign = this->sign;
 	}
 	else { 
-		if( *this == agent99 )
-			return tmp_cero;
-
-		tmp_cero = subtract_magnitudes(*this, agent99);
 		int compare = compare_magnitudes(*this, agent99);
+		if( compare == 0 )
+			return tmp_cero;
+		
+		tmp_cero = subtract_magnitudes(*this, agent99);
 		if(compare == 1) 
 			tmp_cero.sign = this->sign;	
 		else 
@@ -440,7 +440,7 @@ Integer Integer :: operator % (const Integer &agent99) const{
   	Denominator.sign = '+';
 
   	if(Numerator < Denominator) {
-  		if(this->sign == '-' ) 
+  		if(this->sign == '-' && Numerator != 0 ) 
   			Numerator.sign = '-';
   		return Numerator;
 	}
@@ -449,7 +449,7 @@ Integer Integer :: operator % (const Integer &agent99) const{
   		Numerator = Numerator - Denominator;
   	}
 
-  	if(this->sign == '-') 
+	if(this->sign == '-' && Numerator != 0 ) 
   		Numerator.sign = '-';
 
     return Numerator;
