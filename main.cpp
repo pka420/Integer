@@ -442,6 +442,16 @@ Integer Integer :: operator % (const Integer &agent99) const{
   	if(Numerator < Denominator)
   		return result;
 
+  	while(Numerator >= Denominator) {
+  		Numerator = Numerator - Denominator;
+  	}
+
+  	if(this->sign != agent99.sign) 
+  		Numerator.sign = '-';
+  	else
+  		Numerator.sign = '+';
+
+    return Numerator;
 }
 
 
@@ -592,26 +602,27 @@ ostream& operator << (ostream &out, const Integer &d)
 
 
 
-
+/*
 int main() {
-	Integer a(6);
+	Integer a(65);
 	Integer b(2);
-	cout<<"noice is: "<< (a/b) <<endl;
+	cout<<"noice is: "<< (a%b) <<endl;
 
 	a = -68;
-	b = -2;
-	cout<<"noice is: "<< (a/b) <<endl;
+	b = -9;
+	cout<<"noice is: "<< (a%b) <<endl;
 
-	a = 700;
-	b = -5;
-	cout<<"noice is: "<< (a/b) <<endl;
+	a = 70;
+	b = -1;
+	cout<<"noice is: "<< (a%b) <<endl;
 
 	a = -7058;
 	b = 3;
-	cout<<"noice is: "<< (a/b) <<endl;
+	cout<<"noice is: "<< (a%b) <<endl;
 }
+*/
 
-/*
+
 
 
 ////////////End of provided function definitions. Use them without any modification.///////////////
@@ -1065,7 +1076,7 @@ int main()
 	return 0;
 }
 
-*/
+
 /*
 
 int main()
