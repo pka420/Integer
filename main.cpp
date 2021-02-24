@@ -14,32 +14,39 @@ private: //Private member functions
 	//These member functions are utilities useful inside the class definition ONLY.
 	//We do not want them to be accessible outside the class definition.
 	void appendDigit(const char &digit) {
-		Integer tmp(*this);
-		if(this->length > 0)
+		Integer tmp;
+		if(this->length > 0) {
+			tmp = *this;
 			this->~Integer();
-
+		}
+		
 		this->magnitude = new char[tmp.length + 1];
 		this->length = tmp.length + 1;
 		this->sign = tmp.sign;
 
 		int i;
+		// if tmp's length is 0, this loop would be jumped.
 		for(i=0; i<tmp.length; i++) {
 			this->magnitude[i] = tmp.magnitude[i];
 		}
 		this->magnitude[i] = digit;
 	}
 	void prependDigit(const char &digit) {
-		Integer tmp(*this);
-		if(this->length > 0)
+		Integer tmp;
+		if(this->length > 0) {
+			tmp = *this;
 			this->~Integer();
-
+		}
+		
 		this->magnitude = new char[tmp.length + 1];
 		this->length = tmp.length + 1;
 		this->sign = tmp.sign;
-
+		
 		this->magnitude[0] = digit;
-		for(int i=1; i<tmp.length; i++) {
-			this->magnitude[i] = tmp.magnitude[i];
+		int i;
+		// if tmp's length is 0, this loop would be jumped.
+		for(i=1; i<=tmp.length; i++) {
+			this->magnitude[i] = tmp.magnitude[i-1];
 		}
 	}
 	void resize(const int &new_length) {
@@ -51,7 +58,7 @@ private: //Private member functions
 
 			int i=0;
 			while(i< (new_length-tmp.length) ) {
-				this->magnitude[i] = static_cast<char>(0);
+				this->magnitude[i] = '0';
 				i++;
 			}
 			for(int k=0; i<new_length; i++, k++) 
@@ -86,31 +93,34 @@ private: //Private member functions
 	}
 
 	static int compare_magnitudes(const Integer &A, const Integer &B) {
-		if(A.length > B.length)
-			return 1;
-		else if(A.length < B.length)
-			return 2;
-		else {
-			for(int i = 0 ; i < A.length ; i++) {
-				if(A.magnitude[i] > B.magnitude[i])
-					return 1;
-				else 
-					return 2;
-			}
-		return 0;
-		} 
+		Integer tmp_A(A), tmp_B(B);
 
+		tmp_A.trim();
+		tmp_B.trim();
+
+		if(tmp_A.length > tmp_B.length)
+			return 1;
+		else if(tmp_A.length < tmp_B.length)
+			return 2;
+
+		for(int i = 0 ; i < A.length ; i++) {
+			if(A.magnitude[i] > B.magnitude[i])
+				return 1;
+			else if(A.magnitude[i] < B.magnitude[i])
+				return 2;
+			} 
+		return 0;
 	}
 	static Integer add_magnitudes(const Integer &A, const Integer &B) {
 		int num_a(0), num_b(0), sum(0);
 		// converting:
 		for(int i=0; i<A.length; i++ ) {
 			num_a = num_a*10;
-			num_a = num_a + static_cast<int>(A.magnitude[i]);
+			num_a = num_a + (A.magnitude[i]-48);
 		}
 		for(int i=0; i<B.length; i++ ) {
 			num_b = num_b*10;
-			num_b = num_b + static_cast<int>(B.magnitude[i]);
+			num_b = num_b + (B.magnitude[i]-48);
 		}
 		sum = num_a + num_b;
 		Integer tmp_cero(sum);
@@ -121,12 +131,13 @@ private: //Private member functions
 		// converting:
 		for(int i=0; i<A.length; i++ ) {
 			num_a = num_a*10;
-			num_a = num_a + static_cast<int>(A.magnitude[i]);
+			num_a = num_a + (A.magnitude[i] - 48);
 		}
 		for(int i=0; i<B.length; i++ ) {
 			num_b = num_b*10;
-			num_b = num_b + static_cast<int>(B.magnitude[i]);
+			num_b = num_b + (B.magnitude[i] - 48);
 		}
+		//subtracting:
 		diff = num_a - num_b;
 		Integer tmp_cero(diff);
 		return tmp_cero;
@@ -192,31 +203,37 @@ Integer :: Integer()
 }
 
 Integer :: Integer(const int &num) {
-	int len_num = 0;
-	int n = num;
-	if(n<0)
-		n=-n;
-	int copy2 = n;
-	while(n>0) {
-		n = n/10;
-		len_num++;
-	}
-	
-
-	this->magnitude = new char[len_num];
-	int k;
-	for(int i=len_num-1;i>=0;i--) {
-		k = copy2%10;
-		cout<<static_cast<char>(k);
-		this->magnitude[i] = k;
-		copy2 = copy2/10;
-	}
-
-	this->length = len_num;
-	if(num < 0) 
-		this->sign = '-';
-	else 
+	if(num == 0) {
+		this->length = 1;
+		this->magnitude = new char[1];
+		this->magnitude[0] = '0';
 		this->sign = '+';
+	}
+	else {
+		int len_num = 0;
+		int n = num;
+		if(n<0)
+			n=-n;
+		int copy2 = n;
+		while(n>0) {
+			n = n/10;
+			len_num++;
+		}
+			
+		this->magnitude = new char[len_num];
+		int k;
+		for(int i=len_num-1;i>=0;i--) {
+			k = copy2%10;
+			this->magnitude[i] = '0' + k;
+			copy2 = copy2/10;
+		}
+
+		this->length = len_num;
+		if(num < 0) 
+			this->sign = '-';
+		else 
+			this->sign = '+';
+	}
 }
 Integer :: Integer(const Integer & agent99) {
 	if(agent99.length > 0) {
@@ -273,66 +290,117 @@ Integer& Integer :: operator ++ () {
 	*this = *this + 1;
 	return *this;
 }
-Integer& Integer :: operator -- (){
+Integer& Integer :: operator -- () {
 	*this = *this - 1;
 	return *this;	
 }
-Integer Integer :: operator ++ (int){
+Integer Integer :: operator ++ (int) {
 	Integer tmp_cero(*this);
-	*this = *this+1;
+	*this = *this + 1;
 	return tmp_cero;
 }
-Integer Integer :: operator -- (int){
+Integer Integer :: operator -- (int) {
 	Integer tmp_cero(*this);
-	*this = *this-1;
+	*this = *this - 1;
 	return tmp_cero;
 }
 
 Integer Integer :: operator + (const Integer &agent99) const {
-	Integer tmp_cero;
+	Integer tmp_cero(0);
 	if(this->sign == agent99.sign) {
 		tmp_cero = add_magnitudes(*this, agent99);
 		tmp_cero.sign = this->sign;
 	}
 	else { 
-		int real_int = compare_magnitudes(*this, agent99);
-		if( real_int == 0) {
-			tmp_cero = 0;
+		if( *this == agent99 )
 			return tmp_cero;
-		}
-		else if( real_int == 1)
-			tmp_cero.sign = this->sign;
+
+		tmp_cero = subtract_magnitudes(*this, agent99);
+		int compare = compare_magnitudes(*this, agent99);
+		if(compare == 1) 
+			tmp_cero.sign = this->sign;	
 		else 
 			tmp_cero.sign = agent99.sign;
-		
-		Integer tmp_cero = subtract_magnitudes(*this, agent99);
 	}
 	return tmp_cero;
 }
-Integer Integer :: operator - (const Integer &agent99) const{
+Integer Integer :: operator - (const Integer &agent99) const {
 	Integer tmp_B(agent99);
-	tmp_B = - tmp_B;
-	return (*this + agent99);
+	tmp_B = -tmp_B;
+	return (*this + tmp_B);
 }
-Integer Integer :: operator * (const Integer &agent99) const{
-	int a(0), b(0);
-	// converting to integers:
-	for(int i=0;i<this->length;i++) {
-		a = a*10;
-		a = a + static_cast<int>(this->magnitude[i]);
-	}
-	for(int i=0;i<agent99.length;i++) {
-		b = b*10;
-		b = b + static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	b = -b;
-	if(this->sign == '-')
-    	a = -a;
+Integer Integer :: operator * (const Integer &agent99) const {
+ 	int len1 = this->length; 
+    int len2 = agent99.length; 
+    int len;
+    if (*this == 0 || agent99 == 0) {
+    	Integer tmp_cero(0);
+    	return tmp_cero; 
+    }
 
-    Integer tmp_cero(a*b);
-    return tmp_cero;
+    if(len1 > len2)
+    	len = len1;
+    else 
+    	len = len2;
+
+    // this is to make the lengths of both operand equal, so that A*B = B*A, no special loop conditions yo bliss.
+    Integer A(*this), B(agent99);
+    A.resize(len);
+    B.resize(len);
+
+    Integer result;	// this is to store result after each computation.
+    int i_n1 = 0;  	// this is to keep track of zeros that are needed to be added to carry
+    int i_n2 = 0; 	// this is to keep track of zero_offset. ...
+
+    Integer carry(0);  
+    Integer *store_result = new Integer[len];	// this is to store all the results and add them at the end.
+    
+    // Going right to left in A 
+    for (int i=len-1; i>=0; i--) 
+    { 
+        carry = 0;
+        int n1 = (A.magnitude[i]-48); 
+        i_n2 = 0;  
+        // Go from right to left in num2              
+        for (int j=len-1; j>=0; j--) 
+        { 
+            int n2 = (B.magnitude[j]-48);
+            int sum = n1*n2  + (carry.magnitude[0] - 48);
+            // Carry for next iteration 
+            carry = (sum/10); 
+            //cout<<"carry after inserting is: "<<carry<<endl;
+            result.prependDigit((sum%10) + '0');
+            //cout<<"result after inserting is: "<<result<<endl;
+            i_n2++; 
+        } 
+      	// adding carry and current result after ith iteration.
+        if (carry > 0) {
+        	for(int i=0;i<(i_n2 + i_n1);i++) 
+        		carry.appendDigit(0 + '0');
+            result = add_magnitudes(result, carry);
+        }
+        // storing current result
+        store_result[i] = result;
+        // preparing for next result.
+        result.~Integer();
+        i_n1++; 
+        for(int i=0;i<i_n1;i++) {
+        	result.prependDigit(0 + '0');
+        }
+    } 
+    result = 0;
+    // adding all the reusults
+    for(int i=0;i<len;i++) {
+    	result = add_magnitudes(store_result[i], result);
+    }
+ 	result.trim();
+
+ 	if(this->sign == agent99.sign)
+ 		result.sign = '+';
+ 	else
+ 		result.sign = '-';
+
+    return result; 
 }
 Integer Integer :: operator / (const Integer &agent99) const{
 	int a(0), b(0);
@@ -398,9 +466,12 @@ Integer Integer :: operator %= (const Integer &agent99) {
 }
 
 bool Integer :: operator == (const Integer &agent99) const{
+	//cout<<"x has sign"<<this->sign<<endl;
+	//	cout<<"d1 has sign"<<agent99.sign<<endl;
 	if(this->sign == agent99.sign)
 		if(compare_magnitudes(*this, agent99) == 0)
 			return true;
+
 	return false;
 }
 bool Integer :: operator != (const Integer &agent99) const{
@@ -408,129 +479,66 @@ bool Integer :: operator != (const Integer &agent99) const{
 }
 
 bool Integer :: operator > (const Integer &agent99) const {
-	if(this->sign == '+' && agent99.sign == '-') 
-		return true;
-	else if(this->sign == '-' && agent99.sign == '+')
-		return false;
-	else {
-		if(this->length > agent99.length)
+	if(this->sign != agent99.sign ) {
+		if(this->sign == '+') 
 			return true;
-		else if(this->length < agent99.length)
+		else 
 			return false;
-		else {
-			if(compare_magnitudes(*this, agent99) == 1)
-				return true;
-		}
 	}
+	else {
+			int compare = compare_magnitudes(*this, agent99);
+			if(this->sign == '+') 
+				if(compare == 1)
+					return true;
+				else 
+					return false;
+			else
+				if(compare == 1)
+					return false;
+				else
+					return true;
+		}
 	return false;
 }
 bool Integer :: operator < (const Integer &agent99) const{
-	return !(this->operator>(agent99));
+	return !(*this > agent99);
 }
 bool Integer :: operator >= (const Integer &agent99) const{
-	if(this->sign == '+' && agent99.sign == '-') 
+	if(*this == agent99)
 		return true;
-	else if(this->sign == '-' && agent99.sign == '+')
-		return false;
-	else {
-		if(this->length > agent99.length)
-			return true;
-		else if(this->length < agent99.length)
-			return false;
-		else {
-			if(compare_magnitudes(*this, agent99) != -1 )
-				return true;
-		}
-	}
-	return false;	
+	else if(*this > agent99)
+		return true;
+
+	return false;
 }
 bool Integer :: operator <= (const Integer &agent99) const{
-	if(this->sign == '+' && agent99.sign == '-') 
+	if(*this == agent99)
 		return true;
-	else if(this->sign == '-' && agent99.sign == '+')
-		return false;
-	else {
-		if(this->length > agent99.length)
-			return true;
-		else if(this->length < agent99.length)
-			return false;
-		else {
-			if(compare_magnitudes(*this, agent99) != 1 )
-				return true;
-		}
-	}
+	else if(*this < agent99)
+		return true;
+
 	return false;
 }
 
 Integer operator + (const int &una, const Integer &agent99) {
-	int num(0);
-	//converting:
-	for(int i=0;i<agent99.length;i++) {
-		num = num*10;
-		num = static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	num = -num;
-
-    Integer tmp_cero(una + num);
-	return tmp_cero;
+	Integer tmp_cero(una);
+	return (tmp_cero + agent99);
 }
 Integer operator - (const int &una, const Integer &agent99) {
-	int num(0);
-	//converting:
-	for(int i=0;i<agent99.length;i++) {
-		num = num*10;
-		num = static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	num = -num;
-
-    Integer tmp_cero(una - num);
-	return tmp_cero;
+	Integer tmp_cero(una);
+	return (tmp_cero - agent99);
 }
 Integer operator * (const int &una, const Integer &agent99) {
-	int num(0);
-	//converting:
-	for(int i=0;i<agent99.length;i++) {
-		num = num*10;
-		num = static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	num = -num;
-
-    Integer tmp_cero(una * num);
-	return tmp_cero;
+	Integer tmp_cero(una);
+	return (tmp_cero * agent99);
 }
 Integer operator / (const int &una, const Integer &agent99) {
-	int num(0);
-	//converting:
-	for(int i=0;i<agent99.length;i++) {
-		num = num*10;
-		num = static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	num = -num;
-
-    Integer tmp_cero(una / num);
-	return tmp_cero;
+	Integer tmp_cero(una);
+	return (tmp_cero / agent99);
 }
 Integer operator % (const int &una, const Integer &agent99) {
-	int num(0);
-	//converting:
-	for(int i=0;i<agent99.length;i++) {
-		num = num*10;
-		num = static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	num = -num;
-
-    Integer tmp_cero(una % num);
-	return tmp_cero;
+	Integer tmp_cero(una);
+	return (tmp_cero % agent99);
 }
 
 bool operator == (const int &una, const Integer &agent99) {
@@ -542,19 +550,18 @@ bool operator != (const int &una, const Integer &agent99) {
 }
 bool operator > (const int &una, const Integer &agent99) {
 	Integer tmp_cero(una);
-	return tmp_cero > agent99;
+	return (tmp_cero > agent99);
 }
 bool operator < (const int &una, const Integer &agent99) {
-	Integer tmp_cero(una);
-	return !(tmp_cero > agent99);
+	return !(una > agent99);
 }
 bool operator >= (const int &una, const Integer &agent99) {
 	Integer tmp_cero(una);
-	return tmp_cero <= agent99;
+	return (tmp_cero >= agent99);
 }
 bool operator <= (const int &una, const Integer &agent99) {
 	Integer tmp_cero(una);
-	return tmp_cero <= agent99;
+	return (tmp_cero <= agent99);
 }
 
 ostream& operator << (ostream &out, const Integer &d)
@@ -585,27 +592,25 @@ ostream& operator << (ostream &out, const Integer &d)
 
 
 
+int main() {
+	Integer a(68);
+	Integer b(1);
+	cout<<"noice is: "<< (a*b) <<endl;
 
+	a = -68;
+	b = -1;
+	cout<<"noice is: "<< (a*b) <<endl;
 
+	a = 70;
+	b = -1;
+	cout<<"noice is: "<< (a*b) <<endl;
 
+	a = -70;
+	b = 1;
+	cout<<"noice is: "<< (a*b) <<endl;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
 
 
 ////////////End of provided function definitions. Use them without any modification.///////////////
@@ -613,12 +618,11 @@ int main()
 {
 	//Test constructors
 	Integer n1, n2(-10023);
-	//Integer n3(n2);
-	Integer n3;
+	Integer n3(n2);
 	cout << "Default Integer object n1 is " << n1 << endl;
 	cout << "Non-default Integer object n2 is " << n2 << endl;
 	cout << "Non-default Integer object n3 is " << n3 << endl;
-/*
+
 	//Test destructor
 	n2.~Integer();
 	cout << "After destructing it, n2 is now " << n2 << endl;
@@ -839,8 +843,10 @@ int main()
 
 		//Test addition operation
 		x = rand()%2 ? rand() : -rand();
+		//x = -10;
 		d1 = x;
 		y = rand()%2 ? rand() : -rand();
+		//y = -10;
 		d2 = y;
 		z = x + y;
 		d3 = d1 + d2;
@@ -1053,8 +1059,33 @@ int main()
 
 	if (success)
 		cout << endl << "Looks like all your computations were correct. Congratulations!" << endl;
-*/
+
 	system("Pause");
 	return 0;
 }
 
+*/
+/*
+
+int main()
+{
+	
+	Integer d1 = 1, d2 = 1, d3;
+	srand(time(0));
+	char ch;
+	do
+	{
+		d1 *= rand();
+		d2 *= rand();
+		d3 = d1 * d2;
+		cout << "First Number = " << d1 << endl;
+		cout << "Second Number = " << d2 << endl;
+		cout << "Their Product = " << d3 << endl << endl;
+		cout << "Do you want to keep on multiplying? (y/n): ";
+		cin >> ch;
+	}while ((ch == 'y') || (ch == 'Y'));
+
+	system("Pause");
+	return 0;
+}
+*/
