@@ -403,44 +403,45 @@ Integer Integer :: operator * (const Integer &agent99) const {
     return result; 
 }
 Integer Integer :: operator / (const Integer &agent99) const{
-	int a(0), b(0);
-	// converting to integers:
-	for(int i=0;i<this->length;i++) {
-		a = a*10;
-		a = a + static_cast<int>(this->magnitude[i]);
-	}
-	for(int i=0;i<agent99.length;i++) {
-		b = b*10;
-		b = b + static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	b = -b;
-	if(this->sign == '-')
-    	a = -a;
+  	if(agent99 == 0) {	// division by 0
+  		cerr<<"ERROR: Cannot divide by 0"<<endl;
+  		abort();
+  	}
 
-    Integer tmp_cero(a/b);
-    return tmp_cero;
+  	Integer result(0); 
+  	Integer Numerator(*this);
+  	Integer Denominator(agent99);
+  	Numerator.sign = '+';
+  	Denominator.sign = '+';
+
+  	if(Numerator < Denominator) 
+  		return result;
+  	
+  	while(Numerator >= Denominator) {
+  		Numerator = Numerator - Denominator;
+  		result++;
+  	}
+
+  	if(this->sign != agent99.sign) 
+  		result.sign = '-';
+  	// else '+' -- no need to assign.
+    return result;
 }
 Integer Integer :: operator % (const Integer &agent99) const{
-	int a(0), b(0);
-	// converting to integers:
-	for(int i=0;i<this->length;i++) {
-		a = a*10;
-		a = a + static_cast<int>(this->magnitude[i]);
-	}
-	for(int i=0;i<agent99.length;i++) {
-		b = b*10;
-		b = b + static_cast<int>(agent99.magnitude[i]);
-	}
-    // signing:
-    if(agent99.sign == '-')
-    	b = -b;
-	if(this->sign == '-')
-    	a = -a;
+	if(agent99 == 0) {
+		cerr<<"ERROR: Modulo undefined on 0"<<endl;
+  		abort();
+  	}
 
-    Integer tmp_cero(a%b);
-    return tmp_cero;
+  	Integer result(0); 
+  	Integer Numerator(*this);
+  	Integer Denominator(agent99);
+  	Numerator.sign = '+';
+  	Denominator.sign = '+';
+
+  	if(Numerator < Denominator)
+  		return result;
+
 }
 
 
@@ -593,21 +594,21 @@ ostream& operator << (ostream &out, const Integer &d)
 
 
 int main() {
-	Integer a(68);
-	Integer b(1);
-	cout<<"noice is: "<< (a*b) <<endl;
+	Integer a(6);
+	Integer b(2);
+	cout<<"noice is: "<< (a/b) <<endl;
 
 	a = -68;
-	b = -1;
-	cout<<"noice is: "<< (a*b) <<endl;
+	b = -2;
+	cout<<"noice is: "<< (a/b) <<endl;
 
-	a = 70;
-	b = -1;
-	cout<<"noice is: "<< (a*b) <<endl;
+	a = 700;
+	b = -5;
+	cout<<"noice is: "<< (a/b) <<endl;
 
-	a = -70;
-	b = 1;
-	cout<<"noice is: "<< (a*b) <<endl;
+	a = -7058;
+	b = 3;
+	cout<<"noice is: "<< (a/b) <<endl;
 }
 
 /*
